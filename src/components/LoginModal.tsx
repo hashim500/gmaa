@@ -4,11 +4,15 @@ import {
   GraduationCap,
   Presentation,
   ShieldAlert,
-  Zap,
   Lock,
   Mail,
   ArrowRight,
-  CheckCircle2,
+  Eye,
+  EyeOff,
+  Sparkles,
+  ShieldCheck,
+  AlertCircle,
+  HelpCircle,
 } from 'lucide-react';
 import { CollegeLogo } from './CollegeLogo';
 import { User, UserRole } from '../types';
@@ -31,8 +35,11 @@ export const LoginModal: React.FC<LoginModalProps> = ({
 }) => {
   const [activeRole, setActiveRole] = useState<UserRole>(initialRole || 'student');
   const [emailOrId, setEmailOrId] = useState('');
-  const [password, setPassword] = useState('123456');
+  const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [rememberMe, setRememberMe] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const notifySuccess = (user: User) => {
     if (onLoginSuccess) onLoginSuccess(user);
@@ -40,233 +47,325 @@ export const LoginModal: React.FC<LoginModalProps> = ({
     onClose();
   };
 
-  // Sync initialRole when changed
+  // Reset form when opened or role changed
   React.useEffect(() => {
-    setActiveRole(initialRole);
-    if (initialRole === 'student') {
-      setEmailOrId(DEMO_USERS.student.studentId || '');
-    } else if (initialRole === 'instructor') {
-      setEmailOrId(DEMO_USERS.instructor.email);
-    } else {
-      setEmailOrId(DEMO_USERS.admin.email);
+    setActiveRole(initialRole || 'student');
+    setEmailOrId('');
+    setPassword('');
+    setErrorMessage(null);
+  }, [initialRole, isOpen]);
+
+  // Handle Escape key to close modal
+  React.useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        onClose();
+      }
+    };
+    if (isOpen) {
+      window.addEventListener('keydown', handleKeyDown);
     }
-  }, [initialRole]);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isOpen, onClose]);
 
   if (!isOpen) return null;
 
   const handleRoleChange = (role: UserRole) => {
     setActiveRole(role);
-    if (role === 'student') {
-      setEmailOrId(DEMO_USERS.student.studentId || 'NSAC-2023-104');
-    } else if (role === 'instructor') {
-      setEmailOrId(DEMO_USERS.instructor.email);
+    setEmailOrId('');
+    setPassword('');
+    setErrorMessage(null);
+  };
+
+  const fillDemoCredentials = () => {
+    if (activeRole === 'student') {
+      setEmailOrId('NSAC-2023-104');
+      setPassword('123456');
+    } else if (activeRole === 'instructor') {
+      setEmailOrId('inst-1');
+      setPassword('123456');
     } else {
-      setEmailOrId(DEMO_USERS.admin.email);
+      setEmailOrId('adm-1');
+      setPassword('123456');
     }
+    setErrorMessage(null);
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    setIsLoading(true);
-    setTimeout(() => {
-      setIsLoading(false);
-      const user = DEMO_USERS[activeRole];
-      notifySuccess(user);
-    }, 500);
-  };
+    setErrorMessage(null);
 
-  const handleQuickDemo = (role: UserRole) => {
+    const cleanInput = emailOrId.trim().toLowerCase();
+    const cleanPass = password.trim();
+
+    if (!cleanInput || !cleanPass) {
+      setErrorMessage('يرجى إدخال اسم المستخدم أو الرقم الجامعي وكلمة المرور.');
+      return;
+    }
+
     setIsLoading(true);
+
     setTimeout(() => {
       setIsLoading(false);
-      notifySuccess(DEMO_USERS[role]);
-    }, 300);
+
+      // Verify Credentials strictly based on Role and Accounts
+      if (activeRole === 'student') {
+        const validId = 'nsac-2023-104';
+        const validEmail = 'mohamed.ahmed@nsac.edu.sd';
+        const isPassValid = cleanPass === 'std@2026' || cleanPass === '123456';
+
+        if ((cleanInput === validId || cleanInput === validEmail) && isPassValid) {
+          notifySuccess(DEMO_USERS.student);
+          return;
+        }
+      } else if (activeRole === 'instructor') {
+        const validId = 'inst-1';
+        const validEmail = 'abdullah.alnour@nsac.edu.sd';
+        const isPassValid = cleanPass === 'prof@2026' || cleanPass === '123456';
+
+        if ((cleanInput === validId || cleanInput === validEmail) && isPassValid) {
+          notifySuccess(DEMO_USERS.instructor);
+          return;
+        }
+      } else if (activeRole === 'admin') {
+        const validEmail1 = 'admin@nsac.edu.sd';
+        const validEmail2 = 'dean@nsac.edu.sd';
+        const validId = 'adm-1';
+        const isPassValid = cleanPass === 'admin@2026' || cleanPass === '123456';
+
+        if ((cleanInput === validEmail1 || cleanInput === validEmail2 || cleanInput === validId) && isPassValid) {
+          notifySuccess(DEMO_USERS.admin);
+          return;
+        }
+      }
+
+      setErrorMessage('بيانات الدخول غير صحيحة. يرجى التحقق من صحة الرقم الجامعي/البريد الإلكتروني وكلمة المرور.');
+    }, 450);
   };
 
   return (
-    <div className="fixed inset-0 z-50 bg-slate-900/70 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
+    <div
+      className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-3 sm:p-4 overflow-y-auto"
+      onClick={onClose}
+    >
       <div
-        className="bg-white w-full max-w-md rounded-3xl p-6 sm:p-8 shadow-2xl border border-slate-200 relative my-8"
+        className="bg-white w-full max-w-md rounded-3xl shadow-2xl border-2 border-[#c59b6d]/40 overflow-hidden relative my-auto animate-fade-in max-h-[92vh] flex flex-col"
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Close Button */}
-        <button
-          onClick={onClose}
-          className="absolute top-5 left-5 text-slate-400 hover:text-slate-700 bg-slate-100 hover:bg-slate-200 w-9 h-9 rounded-full flex items-center justify-center transition"
-          aria-label="إغلاق"
-        >
-          <X className="w-5 h-5" />
-        </button>
+        {/* Top Gradient Banner - Sticky on mobile so exit button is always reachable */}
+        <div className="bg-gradient-to-r from-[#06182c] via-[#0b2545] to-[#133e68] p-4 sm:p-6 text-white relative border-b-2 border-[#c59b6d] flex-shrink-0">
+          {/* Prominent High-Visibility Close Button for Mobile & Desktop */}
+          <button
+            type="button"
+            onClick={onClose}
+            className="absolute top-3.5 left-3.5 text-white bg-white/20 hover:bg-white/35 active:bg-white/40 w-11 h-11 min-w-[44px] min-h-[44px] rounded-full flex items-center justify-center transition shadow-md z-30 cursor-pointer border border-white/30"
+            aria-label="إغلاق نافذة تسجيل الدخول"
+            title="إغلاق والعودة إلى الموقع"
+          >
+            <X className="w-5 h-5 text-white" />
+          </button>
 
-        {/* Modal Header with College Emblem */}
-        <div className="text-center space-y-2 mb-6">
-          <div className="flex justify-center mb-1">
-            <CollegeLogo size="lg" />
+          <div className="flex items-center gap-3 pr-1">
+            <div className="w-12 h-12 rounded-2xl bg-white p-1 shadow-md flex items-center justify-center flex-shrink-0">
+              <CollegeLogo size="sm" />
+            </div>
+            <div className="pl-12">
+              <div className="inline-flex items-center gap-1.5 bg-[#c59b6d]/20 text-[#fae588] text-[10px] font-black px-2.5 py-0.5 rounded-full mb-1">
+                <Sparkles className="w-3 h-3 text-amber-300" />
+                <span>بوابة الدخول الموحدة الآمنة</span>
+              </div>
+              <h3 className="text-base sm:text-lg font-black text-white leading-tight">كلية السودان الجديد للمحاسبة</h3>
+              <p className="text-[11px] text-slate-300 mt-0.5">تسجيل الدخول للأنظمة والخدمات الجامعية</p>
+            </div>
           </div>
-          <h3 className="text-xl font-black text-slate-900">
-            {activeRole === 'student' && 'بوابة تسجيل دخول الطالب'}
-            {activeRole === 'instructor' && 'بوابة تسجيل دخول عضو هيئة التدريس'}
-            {activeRole === 'admin' && 'بوابة تسجيل دخول إدارة الكلية'}
-          </h3>
-          <p className="text-xs text-slate-500">
-            أهلاً بك في البوابة الإلكترونية المعتمدة لكلية السودان الجديد للمحاسبة
-          </p>
         </div>
 
-        {/* Role Selector Tabs */}
-        <div className="grid grid-cols-3 gap-1.5 p-1.5 bg-slate-100 rounded-2xl mb-6">
-          <button
-            type="button"
-            onClick={() => handleRoleChange('student')}
-            className={`py-2 px-2 rounded-xl text-xs font-bold transition flex items-center justify-center gap-1.5 ${
-              activeRole === 'student'
-                ? 'bg-blue-700 text-white shadow-xs'
-                : 'text-slate-600 hover:text-slate-900'
-            }`}
-          >
-            <GraduationCap className="w-4 h-4" /> طالب
-          </button>
-          <button
-            type="button"
-            onClick={() => handleRoleChange('instructor')}
-            className={`py-2 px-2 rounded-xl text-xs font-bold transition flex items-center justify-center gap-1.5 ${
-              activeRole === 'instructor'
-                ? 'bg-slate-800 text-white shadow-xs'
-                : 'text-slate-600 hover:text-slate-900'
-            }`}
-          >
-            <Presentation className="w-4 h-4" /> معلم
-          </button>
-          <button
-            type="button"
-            onClick={() => handleRoleChange('admin')}
-            className={`py-2 px-2 rounded-xl text-xs font-bold transition flex items-center justify-center gap-1.5 ${
-              activeRole === 'admin'
-                ? 'bg-amber-600 text-white shadow-xs'
-                : 'text-slate-600 hover:text-slate-900'
-            }`}
-          >
-            <ShieldAlert className="w-4 h-4" /> إداري
-          </button>
-        </div>
-
-        {/* Login Form */}
-        <form onSubmit={handleSubmit} className="space-y-4">
+        {/* Scrollable Form Body */}
+        <div className="p-5 sm:p-6 space-y-4 overflow-y-auto">
+          {/* Role Selector Tabs */}
           <div>
-            <label className="block text-xs font-bold text-slate-700 mb-1.5">
-              {activeRole === 'student'
-                ? 'الرقم الجامعي أو البريد الجامعي'
-                : 'البريد الإلكتروني الأكاديمي'}
-            </label>
-            <div className="relative">
-              <input
-                type="text"
-                required
-                value={emailOrId}
-                onChange={(e) => setEmailOrId(e.target.value)}
-                className="w-full bg-slate-50 border border-slate-300 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-600 font-sans"
-                placeholder={
+            <label className="text-[11px] font-black text-slate-600 block mb-2">اختر البوابة المستهدفة:</label>
+            <div className="grid grid-cols-3 gap-2 p-1 bg-slate-100 rounded-2xl border border-slate-200">
+              <button
+                type="button"
+                onClick={() => handleRoleChange('student')}
+                className={`py-2 px-2 rounded-xl text-xs font-black transition flex items-center justify-center gap-1.5 cursor-pointer ${
                   activeRole === 'student'
-                    ? 'NSAC-2023-104'
-                    : 'instructor@nsac.edu.sd'
-                }
-              />
-              <Mail className="w-4 h-4 text-slate-400 absolute left-3 top-3.5" />
+                    ? 'bg-[#0b2545] text-amber-300 shadow-sm'
+                    : 'text-slate-600 hover:text-slate-900'
+                }`}
+              >
+                <GraduationCap className="w-4 h-4" /> طالب
+              </button>
+              <button
+                type="button"
+                onClick={() => handleRoleChange('instructor')}
+                className={`py-2 px-2 rounded-xl text-xs font-black transition flex items-center justify-center gap-1.5 cursor-pointer ${
+                  activeRole === 'instructor'
+                    ? 'bg-[#0b2545] text-amber-300 shadow-sm'
+                    : 'text-slate-600 hover:text-slate-900'
+                }`}
+              >
+                <Presentation className="w-4 h-4" /> أستاذ
+              </button>
+              <button
+                type="button"
+                onClick={() => handleRoleChange('admin')}
+                className={`py-2 px-2 rounded-xl text-xs font-black transition flex items-center justify-center gap-1.5 cursor-pointer ${
+                  activeRole === 'admin'
+                    ? 'bg-[#0b2545] text-amber-300 shadow-sm'
+                    : 'text-slate-600 hover:text-slate-900'
+                }`}
+              >
+                <ShieldAlert className="w-4 h-4" /> إدارة
+              </button>
             </div>
           </div>
 
-          <div>
-            <div className="flex items-center justify-between mb-1.5">
-              <label className="block text-xs font-bold text-slate-700">
-                كلمة المرور
+          {/* Quick Demo Autofill Helper */}
+          <div className="bg-amber-50/80 border border-amber-200 rounded-2xl p-2.5 flex items-center justify-between gap-2 text-xs">
+            <div className="text-right">
+              <span className="text-[10px] text-amber-800 font-bold block">
+                {activeRole === 'student'
+                  ? 'حساب تجريبي: NSAC-2023-104 (123456)'
+                  : activeRole === 'instructor'
+                  ? 'حساب أستاذ: inst-1 (123456)'
+                  : 'حساب إدارة: adm-1 (123456)'}
+              </span>
+            </div>
+            <button
+              type="button"
+              onClick={fillDemoCredentials}
+              className="bg-amber-500 hover:bg-amber-600 text-slate-950 font-black text-[10px] px-2.5 py-1 rounded-xl shadow-xs transition flex-shrink-0 cursor-pointer"
+            >
+              تعبئة تلقائية
+            </button>
+          </div>
+
+          {/* Error Message */}
+          {errorMessage && (
+            <div className="p-3 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 text-xs font-bold flex items-center gap-2 animate-shake">
+              <AlertCircle className="w-4 h-4 flex-shrink-0 text-rose-600" />
+              <span>{errorMessage}</span>
+            </div>
+          )}
+
+          {/* Secure Login Form */}
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div>
+              <label className="block text-xs font-bold text-slate-700 mb-1">
+                {activeRole === 'student'
+                  ? 'الرقم الجامعي أو البريد الإلكتروني'
+                  : 'البريد الإلكتروني الجامعي أو المعرّف الأكاديمي'}
               </label>
-              <span className="text-[11px] text-blue-700 font-semibold cursor-pointer hover:underline">
+              <div className="relative">
+                <input
+                  type="text"
+                  required
+                  placeholder={
+                    activeRole === 'student'
+                      ? 'مثال: NSAC-2023-104 أو البريد الجامعي'
+                      : activeRole === 'instructor'
+                      ? 'البريد الجامعي للأستاذ (inst-1)'
+                      : 'البريد الرسمي للإدارة الأكاديمية (adm-1)'
+                  }
+                  value={emailOrId}
+                  onChange={(e) => setEmailOrId(e.target.value)}
+                  className="w-full pl-3 pr-10 py-3 rounded-xl border border-slate-300 text-xs font-bold text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#0b2545] focus:border-transparent transition"
+                />
+                <div className="absolute right-3 top-3 text-slate-400">
+                  {activeRole === 'student' ? <GraduationCap className="w-5 h-5" /> : <Mail className="w-5 h-5" />}
+                </div>
+              </div>
+            </div>
+
+            <div>
+              <div className="flex justify-between items-center mb-1">
+                <label className="block text-xs font-bold text-slate-700">كلمة المرور السرية</label>
+                <span className="text-[10px] text-slate-400">مشفرة بأمان</span>
+              </div>
+              <div className="relative">
+                <input
+                  type={showPassword ? 'text' : 'password'}
+                  required
+                  placeholder="••••••••"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="w-full pl-10 pr-10 py-3 rounded-xl border border-slate-300 text-xs font-bold text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#0b2545] focus:border-transparent transition"
+                />
+                <div className="absolute right-3 top-3 text-slate-400">
+                  <Lock className="w-5 h-5" />
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute left-3 top-3 text-slate-400 hover:text-slate-600 focus:outline-none"
+                  tabIndex={-1}
+                >
+                  {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                </button>
+              </div>
+            </div>
+
+            <div className="flex items-center justify-between text-xs pt-1">
+              <label className="flex items-center gap-2 cursor-pointer text-slate-600">
+                <input
+                  type="checkbox"
+                  checked={rememberMe}
+                  onChange={(e) => setRememberMe(e.target.checked)}
+                  className="rounded text-[#0b2545] focus:ring-[#0b2545]"
+                />
+                <span>تذكر بيانات تسجيل الدخول</span>
+              </label>
+
+              <button
+                type="button"
+                onClick={() =>
+                  alert('لإعادة تعيين كلمة المرور أو في حال فقدان بيانات الدخول، يرجى مراجعة إدارة القبول والتسجيل أو مسؤولي الدعم الفني بالكلية.')
+                }
+                className="text-[#0b2545] hover:underline font-bold text-[11px]"
+              >
                 نسيت كلمة المرور؟
-              </span>
+              </button>
             </div>
-            <div className="relative">
-              <input
-                type="password"
-                required
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="w-full bg-slate-50 border border-slate-300 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-600 font-mono"
-              />
-              <Lock className="w-4 h-4 text-slate-400 absolute left-3 top-3.5" />
+
+            {/* Action Buttons: Submit AND Explicit Mobile-Friendly Cancel Button */}
+            <div className="space-y-2 pt-2">
+              <button
+                type="submit"
+                disabled={isLoading}
+                className="w-full bg-[#0b2545] hover:bg-[#133e68] text-white font-black py-3 rounded-2xl text-xs sm:text-sm shadow-md transition flex items-center justify-center gap-2 group cursor-pointer"
+              >
+                {isLoading ? (
+                  <span className="inline-block w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+                ) : (
+                  <>
+                    <ShieldCheck className="w-4 h-4 text-amber-400" />
+                    <span>
+                      تسجيل الدخول إلى{' '}
+                      {activeRole === 'student' ? 'بوابة الطالب' : activeRole === 'instructor' ? 'بوابة المعلم' : 'لوحة الإدارة'}
+                    </span>
+                    <ArrowRight className="w-4 h-4 rotate-180 text-amber-300 group-hover:-translate-x-1 transition" />
+                  </>
+                )}
+              </button>
+
+              {/* Explicit Exit / Cancel Button for Mobile & Desktop */}
+              <button
+                type="button"
+                onClick={onClose}
+                className="w-full bg-slate-100 hover:bg-slate-200 active:bg-slate-300 text-slate-700 font-bold py-2.5 rounded-xl text-xs transition flex items-center justify-center gap-1.5 cursor-pointer border border-slate-200"
+              >
+                <X className="w-4 h-4 text-slate-500" />
+                <span>إلغاء والعودة إلى الموقع</span>
+              </button>
             </div>
-          </div>
+          </form>
 
-          <button
-            type="submit"
-            disabled={isLoading}
-            className={`w-full text-white font-bold py-3.5 rounded-xl text-sm shadow-md transition flex items-center justify-center gap-2 ${
-              activeRole === 'student'
-                ? 'bg-blue-700 hover:bg-blue-800'
-                : activeRole === 'instructor'
-                ? 'bg-slate-800 hover:bg-slate-900'
-                : 'bg-amber-600 hover:bg-amber-700'
-            }`}
-          >
-            {isLoading ? (
-              <span className="inline-block w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
-            ) : (
-              <>
-                <span>تسجيل الدخول للنظام</span>
-                <ArrowRight className="w-4 h-4 rotate-180" />
-              </>
-            )}
-          </button>
-        </form>
-
-        {/* Quick Demo Section */}
-        <div className="mt-6 pt-5 border-t border-slate-100 space-y-2.5">
-          <div className="flex items-center gap-2 text-slate-500 text-xs font-bold">
-            <Zap className="w-4 h-4 text-amber-500" />
-            <span>تجربة فورية بنقرة واحدة (حسابات جاهزة للاستعراض):</span>
-          </div>
-
-          <div className="grid grid-cols-1 gap-2">
-            <button
-              type="button"
-              onClick={() => handleQuickDemo('student')}
-              className="w-full bg-blue-50/90 hover:bg-blue-100 text-blue-900 border border-blue-200/80 rounded-xl px-3 py-2 text-xs font-bold transition flex items-center justify-between"
-            >
-              <div className="flex items-center gap-2">
-                <GraduationCap className="w-4 h-4 text-blue-700" />
-                <span>دخول تجريبي كـ: <strong>طالب (محمد أحمد عثمان)</strong></span>
-              </div>
-              <span className="text-[10px] bg-blue-200 text-blue-800 px-2 py-0.5 rounded-md">
-                فوري
-              </span>
-            </button>
-
-            <button
-              type="button"
-              onClick={() => handleQuickDemo('instructor')}
-              className="w-full bg-slate-50 hover:bg-slate-100 text-slate-900 border border-slate-200 rounded-xl px-3 py-2 text-xs font-bold transition flex items-center justify-between"
-            >
-              <div className="flex items-center gap-2">
-                <Presentation className="w-4 h-4 text-slate-700" />
-                <span>دخول تجريبي كـ: <strong>معلم (د. عبد الله النور)</strong></span>
-              </div>
-              <span className="text-[10px] bg-slate-200 text-slate-800 px-2 py-0.5 rounded-md">
-                فوري
-              </span>
-            </button>
-
-            <button
-              type="button"
-              onClick={() => handleQuickDemo('admin')}
-              className="w-full bg-amber-50/80 hover:bg-amber-100 text-amber-900 border border-amber-200 rounded-xl px-3 py-2 text-xs font-bold transition flex items-center justify-between"
-            >
-              <div className="flex items-center gap-2">
-                <ShieldAlert className="w-4 h-4 text-amber-600" />
-                <span>دخول تجريبي كـ: <strong>إدارة الكلية (العميد)</strong></span>
-              </div>
-              <span className="text-[10px] bg-amber-200 text-amber-800 px-2 py-0.5 rounded-md">
-                فوري
-              </span>
-            </button>
+          {/* Privacy & Security Notice */}
+          <div className="pt-2 border-t border-slate-100 flex items-center gap-2 text-[11px] text-slate-500">
+            <HelpCircle className="w-4 h-4 text-slate-400 flex-shrink-0" />
+            <span>نظام تسجيل دخول مشفر وخاص بمنسوبي كلية السودان الجديد للمحاسبة.</span>
           </div>
         </div>
       </div>

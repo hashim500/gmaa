@@ -125,24 +125,6 @@ export const VideoPlayerModal: React.FC<VideoPlayerModalProps> = ({
               </div>
             </div>
           )}
-
-          {/* College Youtube Channel Link */}
-          <div className="p-3 bg-red-950/30 border border-red-800/40 rounded-2xl flex items-center justify-between text-xs">
-            <div className="flex items-center gap-2">
-              <span className="w-2.5 h-2.5 rounded-full bg-red-500 animate-pulse"></span>
-              <span className="text-slate-200 font-semibold">
-                قناة الكلية الرسمية والمحاضرات الأكاديمية على يوتيوب
-              </span>
-            </div>
-            <a
-              href="https://www.youtube.com/@drama7sd"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="bg-red-600 hover:bg-red-700 text-white font-bold px-3 py-1.5 rounded-xl transition flex items-center gap-1.5"
-            >
-              <ExternalLink className="w-3.5 h-3.5" /> زيارة القناة (@drama7sd)
-            </a>
-          </div>
         </div>
       </div>
     </div>

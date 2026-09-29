@@ -9,7 +9,9 @@ import {
   FeePayment,
   Announcement,
   ScheduleItem,
+  LibraryResource,
 } from '../types';
+import { DEFAULT_LIBRARY_RESOURCES } from '../data/academicData';
 
 export const DEMO_USERS: Record<string, User> = {
   student: {
@@ -21,6 +23,18 @@ export const DEMO_USERS: Record<string, User> = {
     department: 'المحاسبة الإلكترونية ونظم المعلومات',
     level: 'المستوى الثالث - بكالوريوس',
     phone: '+249 912 345 678',
+    avatarUrl: 'https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=400&auto=format&fit=crop&q=80',
+    photoUrl: 'https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=400&auto=format&fit=crop&q=80',
+    nationalId: '10928374652',
+    academicYear: '2025/2026',
+    gpa: '3.88',
+    status: 'طالب منتظم - مقيد',
+    bloodGroup: 'O+',
+    bio: 'طالب محاسبة مجتهد مهتم بأنظمة تخطيط الموارد (ERP)، والمراجعة الرقمية والمعايير الدولية للتقارير المالية IFRS.',
+    skills: 'تحليل مالي، إكسل مالي متقدم، معايير IFRS، QuickBooks، تدقيق الحسابات',
+    coursesCompleted: 'أصول المحاسبة 1 و2، التكاليف، مبادئ الإدارة المالية، القانون التجاري',
+    projects: 'مشروع دراسة تطبيق المعيار IFRS 16 على البنوك التجارية السودانية، نموذج تحليل التدفقات النقدية بالاكسل',
+    college: 'كلية السودان الجديد للمحاسبة',
   },
   instructor: {
     id: 'inst-1',
@@ -30,6 +44,30 @@ export const DEMO_USERS: Record<string, User> = {
     department: 'قسم نظم المعلومات المحاسبية والتجارة الإلكترونية',
     level: 'أستاذ المحاسبة المشارك',
     phone: '+249 911 223 344',
+    avatarUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&auto=format&fit=crop&q=80',
+    photoUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&auto=format&fit=crop&q=80',
+    nationalId: '10192837461',
+    status: 'أستاذ مشارك - معتمد',
+    academicTitle: 'أستاذ مشارك في نظم المعلومات المحاسبية والتجارة الإلكترونية',
+    officeLocation: 'المبنى الأكاديمي الرئيسي - الطابق الثاني - قاعة أعضاء هيئة التدريس (مكتب 204)',
+    officeHours: 'الأحد والثلاثاء: 10:00 صباحاً - 01:00 ظهراً | الخميس: 12:00 ظهراً - 02:00 ظهراً',
+    bio: 'أستاذ مشارك في المحاسبة ونظم المعلومات، خبير معتمد في معايير IFRS والتحول الرقمي المالي، باحث وناشر لأكثر من 15 ورقة علمية محكمة في مجلات النشر الدولية.',
+    coursesTaught: [
+      'المحاسبة في بيئة التجارة الإلكترونية',
+      'نظم المعلومات المحاسبية (AIS)',
+      'المراجعة والتدقيق المالي الرقمي',
+    ],
+    researchPapers: [
+      'أثر التجارة الإلكترونية على دقة ونزاهة القيود المحاسبية في المصارف السودانية (2025)',
+      'حوكمة نظم المعلومات المحاسبية السحابية في ظل معايير الأمان السيبراني (2024)',
+      'تحديات تطبيق معيار IFRS 15 في عقود الاتصالات وتكنولوجيا المعلومات (2023)',
+    ],
+    professionalMemberships: [
+      'عضو جمعية المحاسبين القانونيين السودانية (SCPA)',
+      'زميل الهيئة السعودية للمحاسبين والمراجعين (SOCPA)',
+      'عضو جمعية المحاسبة الأمريكية (AAA)',
+    ],
+    college: 'كلية السودان الجديد للمحاسبة',
   },
   admin: {
     id: 'adm-1',
@@ -39,8 +77,45 @@ export const DEMO_USERS: Record<string, User> = {
     department: 'أمانة الشؤون العلمية والمسجل العام',
     level: 'عميد الكلية',
     phone: '+249 912 000 111',
+    avatarUrl: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400&auto=format&fit=crop&q=80',
+    photoUrl: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400&auto=format&fit=crop&q=80',
+    nationalId: '10019283745',
+    status: 'عميد الكلية - رئيس المجلس',
   },
 };
+
+export const PRESET_AVATARS = [
+  {
+    id: 'av-1',
+    name: 'صورة رسمية 1',
+    url: 'https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=400&auto=format&fit=crop&q=80',
+  },
+  {
+    id: 'av-2',
+    name: 'صورة رسمية 2',
+    url: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&auto=format&fit=crop&q=80',
+  },
+  {
+    id: 'av-3',
+    name: 'صورة رسمية 3',
+    url: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400&auto=format&fit=crop&q=80',
+  },
+  {
+    id: 'av-4',
+    name: 'صورة رسمية 4',
+    url: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400&auto=format&fit=crop&q=80',
+  },
+  {
+    id: 'av-5',
+    name: 'صورة رسمية 5',
+    url: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=400&auto=format&fit=crop&q=80',
+  },
+  {
+    id: 'av-6',
+    name: 'صورة رسمية 6',
+    url: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=400&auto=format&fit=crop&q=80',
+  },
+];
 
 export function extractYouTubeVideoId(url: string): string {
   if (!url) return '';
@@ -71,6 +146,7 @@ const DEFAULT_LECTURES: Lecture[] = [
     youtubeUrl: 'https://www.youtube.com/watch?v=M7lc1UVf-VE',
     videoId: 'M7lc1UVf-VE',
     isLive: true,
+    isVisibleToStudents: true,
     description: 'شرح تفصيلي لمعالجة بوابات الدفع الإلكتروني، تسوية المبيعات الرقمية، وحساب عمولات المحافظ الإلكترونية وفق معايير المحاسبة المعتمدة.',
     resources: [
       { name: 'سلايدات_المحاضرة_الأولى.pdf', url: '#', size: '2.4 ميجابايت' },
@@ -88,6 +164,7 @@ const DEFAULT_LECTURES: Lecture[] = [
     youtubeUrl: 'https://www.youtube.com/watch?v=ysz5S6PUM-U',
     videoId: 'ysz5S6PUM-U',
     isLive: false,
+    isVisibleToStudents: true,
     description: 'مكونات دورة العمليات المحاسبية، تصميم مخططات تدفق البيانات (DFD)، والرقابة الداخلية في الأنظمة المالية المؤتمتة.',
     resources: [
       { name: 'دليل_نظم_المعلومات_المحاسبية.pdf', url: '#', size: '3.1 ميجابايت' },
@@ -104,6 +181,7 @@ const DEFAULT_LECTURES: Lecture[] = [
     youtubeUrl: 'https://www.youtube.com/watch?v=kJQP7kiw5Fk',
     videoId: 'kJQP7kiw5Fk',
     isLive: false,
+    isVisibleToStudents: true,
     description: 'النموذج الخماسي للاعتراف بالإيراد من العقود مع العملاء وتطبيقاته العملية في الشركات والمؤسسات السودانية.',
     resources: [
       { name: 'حالات_عملية_معيار_IFRS_15.pdf', url: '#', size: '1.8 ميجابايت' },
@@ -120,9 +198,27 @@ const DEFAULT_LECTURES: Lecture[] = [
     youtubeUrl: 'https://www.youtube.com/watch?v=fJ9rUzIMcZQ',
     videoId: 'fJ9rUzIMcZQ',
     isLive: false,
+    isVisibleToStudents: true,
     description: 'أدوات التدقيق بمساعدة الحاسوب (CAATs)، ومراجعة سلامة السجلات في قواعد بيانات السحاب المحاسبية.',
     resources: [
       { name: 'مذكرة_التدقيق_الرقمي.pdf', url: '#', size: '2.0 ميجابايت' },
+    ],
+  },
+  {
+    id: 'lec-5',
+    title: 'المحاضرة (5): دراسة متقدمة في عقود التأجير التمويلي IFRS 16 (مسودة للإدارة)',
+    course: 'المعايير الدولية (IFRS)',
+    instructor: 'د. عبد الله النور كباشي',
+    date: '2026-09-24',
+    time: '08:00 مساءً',
+    duration: '65 دقيقة',
+    youtubeUrl: 'https://www.youtube.com/watch?v=3u3jG4g7D-M',
+    videoId: '3u3jG4g7D-M',
+    isLive: false,
+    isVisibleToStudents: false, // Hidden from students by default, visible to admin and instructor
+    description: 'تسجيل الالتزامات وأصول حق الاستخدام، تقييم القيمة الحالية لمدفوعات الإيجار. هذا الفيديو مسودة مخفية عن الطلاب حالياً وتتطلب موافقة الإدارة لإظهارها.',
+    resources: [
+      { name: 'دراسة_حالة_IFRS_16.pdf', url: '#', size: '1.2 ميجابايت' },
     ],
   },
 ];
@@ -509,6 +605,7 @@ class StorageService {
   private payments: FeePayment[] = [];
   private announcements: Announcement[] = [];
   private schedule: ScheduleItem[] = [];
+  private pdfResources: LibraryResource[] = [];
 
   constructor() {
     this.init();
@@ -536,6 +633,16 @@ class StorageService {
       this.payments = this.load('nsac_payments', DEFAULT_PAYMENTS);
       this.announcements = this.load('nsac_announcements', DEFAULT_ANNOUNCEMENTS);
       this.schedule = this.load('nsac_weekly_schedule', DEFAULT_SCHEDULE);
+
+      const seededPdfResources: LibraryResource[] = DEFAULT_LIBRARY_RESOURCES.map((res) => ({
+        ...res,
+        isVisibleToStudents: res.isVisibleToStudents !== false,
+        allowDownload: res.allowDownload !== false,
+        uploadedBy: res.uploadedBy || 'أمانة الشؤون العلمية والمسجل',
+        uploadedAt: res.uploadedAt || '2026-09-01',
+        fileName: res.fileName || `${res.title.substring(0, 30)}.pdf`,
+      }));
+      this.pdfResources = this.load('nsac_pdf_resources', seededPdfResources);
     } catch (e) {
       console.error('Failed to load storage', e);
       this.lectures = [...DEFAULT_LECTURES];
@@ -546,6 +653,7 @@ class StorageService {
       this.payments = [...DEFAULT_PAYMENTS];
       this.announcements = [...DEFAULT_ANNOUNCEMENTS];
       this.schedule = [...DEFAULT_SCHEDULE];
+      this.pdfResources = [...DEFAULT_LIBRARY_RESOURCES];
     }
   }
 
@@ -569,8 +677,19 @@ class StorageService {
   }
 
   // Lectures
-  getLectures(): Lecture[] {
+  getLectures(onlyVisibleForStudents = false): Lecture[] {
+    if (onlyVisibleForStudents) {
+      return this.lectures.filter((l) => l.isVisibleToStudents !== false);
+    }
     return [...this.lectures];
+  }
+
+  toggleLectureVisibility(id: string): Lecture | null {
+    const lec = this.lectures.find((l) => l.id === id);
+    if (!lec) return null;
+    lec.isVisibleToStudents = lec.isVisibleToStudents === false ? true : false;
+    this.save('nsac_lectures', this.lectures);
+    return lec;
   }
 
   addLecture(lec: Omit<Lecture, 'id'>): Lecture {
@@ -762,8 +881,8 @@ class StorageService {
         console.error('Error parsing stored user', e);
       }
     }
-    // Default logged in demo student for fast frictionless testing
-    return DEMO_USERS.student;
+    // No automatic login for guest public site visitors
+    return null;
   }
 
   setCurrentUser(user: User | null): void {
@@ -773,6 +892,16 @@ class StorageService {
       localStorage.removeItem('nsac_current_user');
       window.dispatchEvent(new Event('nsac_storage_updated'));
     }
+  }
+
+  updateUserProfile(updatedData: Partial<User>): User {
+    const current = this.getCurrentUser() || DEMO_USERS.student;
+    const merged: User = {
+      ...current,
+      ...updatedData,
+    };
+    this.setCurrentUser(merged);
+    return merged;
   }
 
   logout(): void {
@@ -794,6 +923,11 @@ class StorageService {
     this.announcements.unshift(newAnn);
     this.save('nsac_announcements', this.announcements);
     return newAnn;
+  }
+
+  deleteAnnouncement(id: string): void {
+    this.announcements = this.announcements.filter((a) => a.id !== id);
+    this.save('nsac_announcements', this.announcements);
   }
 
   // Weekly Schedule
@@ -839,6 +973,78 @@ class StorageService {
     this.schedule = [...DEFAULT_SCHEDULE];
     this.save('nsac_weekly_schedule', this.schedule);
     return this.schedule;
+  }
+
+  // PDF Document & Library Resources Management (Admin Control)
+  getPdfResources(onlyVisibleToStudents: boolean = false): LibraryResource[] {
+    if (onlyVisibleToStudents) {
+      return this.pdfResources.filter((r) => r.isVisibleToStudents !== false);
+    }
+    return [...this.pdfResources];
+  }
+
+  addPdfResource(res: Omit<LibraryResource, 'id' | 'downloadCount'>): LibraryResource {
+    const newRes: LibraryResource = {
+      ...res,
+      id: `pdf-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`,
+      downloadCount: 0,
+      uploadedAt: res.uploadedAt || new Date().toISOString().split('T')[0],
+      uploadedBy: res.uploadedBy || 'أمانة الشؤون العلمية والمسجل',
+      isVisibleToStudents: res.isVisibleToStudents !== false,
+      allowDownload: res.allowDownload !== false,
+      format: 'PDF',
+    };
+    this.pdfResources.unshift(newRes);
+    this.save('nsac_pdf_resources', this.pdfResources);
+    return newRes;
+  }
+
+  updatePdfResource(id: string, updates: Partial<LibraryResource>): LibraryResource | null {
+    const index = this.pdfResources.findIndex((r) => r.id === id);
+    if (index === -1) return null;
+    this.pdfResources[index] = {
+      ...this.pdfResources[index],
+      ...updates,
+    };
+    this.save('nsac_pdf_resources', this.pdfResources);
+    return this.pdfResources[index];
+  }
+
+  togglePdfResourceVisibility(id: string): boolean {
+    const item = this.pdfResources.find((r) => r.id === id);
+    if (item) {
+      item.isVisibleToStudents = item.isVisibleToStudents === false ? true : false;
+      this.save('nsac_pdf_resources', this.pdfResources);
+      return item.isVisibleToStudents;
+    }
+    return false;
+  }
+
+  deletePdfResource(id: string): void {
+    this.pdfResources = this.pdfResources.filter((r) => r.id !== id);
+    this.save('nsac_pdf_resources', this.pdfResources);
+  }
+
+  incrementPdfDownload(id: string): void {
+    const item = this.pdfResources.find((r) => r.id === id);
+    if (item) {
+      item.downloadCount = (item.downloadCount || 0) + 1;
+      this.save('nsac_pdf_resources', this.pdfResources);
+    }
+  }
+
+  resetPdfResources(): LibraryResource[] {
+    const seededPdfResources: LibraryResource[] = DEFAULT_LIBRARY_RESOURCES.map((res) => ({
+      ...res,
+      isVisibleToStudents: true,
+      allowDownload: true,
+      uploadedBy: 'أمانة الشؤون العلمية والمسجل',
+      uploadedAt: '2026-09-01',
+      fileName: `${res.title.substring(0, 30)}.pdf`,
+    }));
+    this.pdfResources = seededPdfResources;
+    this.save('nsac_pdf_resources', this.pdfResources);
+    return this.pdfResources;
   }
 }
 

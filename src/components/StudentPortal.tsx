@@ -25,6 +25,9 @@ import {
   X,
   Eye,
   RotateCcw,
+  Camera,
+  IdCard,
+  User as UserIcon,
 } from 'lucide-react';
 import { User, Lecture, Assignment, Submission, Quiz, QuizResult, Announcement } from '../types';
 import { storage } from '../services/storage';
@@ -36,10 +39,20 @@ interface StudentPortalProps {
   student: User;
   onNavigate: (view: string) => void;
   onOpenLecture?: (lec: Lecture) => void;
+  onOpenStudentCard?: () => void;
+  onOpenProfile?: () => void;
 }
 
-export const StudentPortal: React.FC<StudentPortalProps> = ({ student, onNavigate, onOpenLecture }) => {
-  const [activeTab, setActiveTab] = useState<'courses' | 'lectures' | 'assignments' | 'quizzes' | 'announcements'>('courses');
+export type StudentTab = 'hub' | 'courses' | 'lectures' | 'assignments' | 'quizzes' | 'announcements';
+
+export const StudentPortal: React.FC<StudentPortalProps> = ({
+  student,
+  onNavigate,
+  onOpenLecture,
+  onOpenStudentCard,
+  onOpenProfile,
+}) => {
+  const [activeTab, setActiveTab] = useState<StudentTab>('hub');
   const [lectures, setLectures] = useState<Lecture[]>([]);
   const [assignments, setAssignments] = useState<Assignment[]>([]);
   const [submissions, setSubmissions] = useState<Submission[]>([]);
@@ -71,7 +84,7 @@ export const StudentPortal: React.FC<StudentPortalProps> = ({ student, onNavigat
   const [previewImage, setPreviewImage] = useState<string | null>(null);
 
   const loadData = () => {
-    setLectures(storage.getLectures());
+    setLectures(storage.getLectures(true));
     setAssignments(storage.getAssignments());
     setSubmissions(storage.getStudentSubmissions(student.studentId || 'NSAC-2023-104'));
     setQuizzes(storage.getQuizzes());
@@ -201,9 +214,29 @@ export const StudentPortal: React.FC<StudentPortalProps> = ({ student, onNavigat
         <div className="absolute top-0 left-0 w-64 h-64 bg-amber-500/10 rounded-full blur-3xl pointer-events-none"></div>
         <div className="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
           <div className="flex items-center gap-4 sm:gap-5">
-            <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-white/10 border-2 border-[#c59b6d] text-amber-300 flex items-center justify-center font-black text-2xl sm:text-3xl shadow-inner">
-              {student.name.charAt(0)}
+            <div className="relative group">
+              <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-white/10 border-2 border-[#c59b6d] text-amber-300 flex items-center justify-center font-black text-2xl sm:text-3xl shadow-inner overflow-hidden flex-shrink-0">
+                {student.avatarUrl || student.photoUrl ? (
+                  <img
+                    src={student.avatarUrl || student.photoUrl}
+                    alt={student.name}
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  student.name.charAt(0)
+                )}
+              </div>
+              {onOpenProfile && (
+                <button
+                  onClick={onOpenProfile}
+                  className="absolute -bottom-1 -left-1 bg-[#0b2545] text-amber-300 p-1.5 rounded-lg border border-amber-400/50 shadow-sm hover:scale-110 transition"
+                  title="تغيير الصورة الشخصية"
+                >
+                  <Camera className="w-3.5 h-3.5" />
+                </button>
+              )}
             </div>
+
             <div className="space-y-1">
               <div className="flex items-center gap-2 flex-wrap">
                 <span className="bg-amber-400/20 text-amber-300 border border-amber-400/30 px-2.5 py-0.5 rounded-full text-xs font-bold">
@@ -212,6 +245,11 @@ export const StudentPortal: React.FC<StudentPortalProps> = ({ student, onNavigat
                 <span className="bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 px-2.5 py-0.5 rounded-full text-xs font-bold">
                   حالة القيد: منتظم
                 </span>
+                {student.gpa && (
+                  <span className="bg-white/15 text-white border border-white/20 px-2.5 py-0.5 rounded-full text-xs font-bold font-mono">
+                    المعدل: {student.gpa} / 4.00
+                  </span>
+                )}
               </div>
               <h2 className="text-xl sm:text-2xl font-black text-white">{student.name}</h2>
               <p className="text-xs sm:text-sm text-slate-300">
@@ -221,6 +259,28 @@ export const StudentPortal: React.FC<StudentPortalProps> = ({ student, onNavigat
           </div>
 
           <div className="flex flex-wrap gap-2 w-full md:w-auto">
+            {onOpenStudentCard && (
+              <button
+                onClick={onOpenStudentCard}
+                className="bg-amber-400/20 hover:bg-amber-400/30 text-amber-300 border border-amber-400/40 px-4 py-2.5 rounded-xl text-xs font-black shadow-xs transition flex items-center gap-2"
+              >
+                <IdCard className="w-4 h-4 text-amber-400" /> البطاقة الجامعية الذكية
+              </button>
+            )}
+            <button
+              onClick={() => onNavigate('student-profile')}
+              className="bg-emerald-500/20 hover:bg-emerald-500/30 border border-emerald-400/40 text-emerald-300 px-3.5 py-2.5 rounded-xl text-xs font-bold backdrop-blur transition flex items-center gap-1.5"
+            >
+              <UserIcon className="w-4 h-4 text-emerald-300" /> الملف الأكاديمي
+            </button>
+            {onOpenProfile && (
+              <button
+                onClick={onOpenProfile}
+                className="bg-white/10 hover:bg-white/20 border border-white/20 text-white px-3.5 py-2.5 rounded-xl text-xs font-bold backdrop-blur transition flex items-center gap-1.5"
+              >
+                <Camera className="w-4 h-4 text-blue-300" /> تعديل الصورة
+              </button>
+            )}
             <button
               onClick={() => onNavigate('transcript')}
               className="bg-[#c59b6d] hover:bg-[#b2834c] text-[#0b2545] px-4 py-2.5 rounded-xl text-xs font-black shadow-xs transition flex items-center gap-2"
@@ -238,12 +298,6 @@ export const StudentPortal: React.FC<StudentPortalProps> = ({ student, onNavigat
               className="bg-[#0b2545] hover:bg-[#133e68] border border-white/20 text-white px-4 py-2.5 rounded-xl text-xs font-bold shadow-xs transition flex items-center gap-2"
             >
               <Calendar className="w-4 h-4 text-amber-300" /> الجدول
-            </button>
-            <button
-              onClick={() => onNavigate('certificates')}
-              className="bg-white/10 hover:bg-white/20 border border-white/20 text-white px-4 py-2.5 rounded-xl text-xs font-bold backdrop-blur transition flex items-center gap-2"
-            >
-              <Award className="w-4 h-4 text-amber-400" /> طلب شهادة
             </button>
             <button
               onClick={() => onNavigate('fees')}
@@ -290,78 +344,390 @@ export const StudentPortal: React.FC<StudentPortalProps> = ({ student, onNavigat
         </div>
       </div>
 
-      {/* PENDING DEADLINES SECTION (HIGHLIGHTS ASSIGNMENTS DUE WITHIN 48 HOURS) */}
-      <PendingDeadlinesSection
-        assignments={assignments}
-        submissions={submissions}
-        studentId={student.studentId || 'NSAC-2023-104'}
-        onOpenUpload={handleOpenUpload}
-        onViewAllAssignments={() => setActiveTab('assignments')}
-      />
+      {/* 1. WHEN IN 'HUB' VIEW: RENDER ALL STUDENT SERVICES AS INTERACTIVE CARDS */}
+      {activeTab === 'hub' && (
+        <div className="space-y-6">
+          {/* PENDING DEADLINES SECTION (HIGHLIGHTS ASSIGNMENTS DUE WITHIN 48 HOURS) */}
+          <PendingDeadlinesSection
+            assignments={assignments}
+            submissions={submissions}
+            studentId={student.studentId || 'NSAC-2023-104'}
+            onOpenUpload={handleOpenUpload}
+            onViewAllAssignments={() => setActiveTab('assignments')}
+          />
 
-      {/* Tabs Selector */}
-      <div className="flex items-center gap-2 overflow-x-auto pb-1 custom-scrollbar">
-        <button
-          onClick={() => setActiveTab('courses')}
-          className={`px-4 py-2.5 rounded-xl font-bold text-xs transition flex items-center gap-2 whitespace-nowrap ${
-            activeTab === 'courses'
-              ? 'bg-[#0b2545] text-white shadow-xs'
-              : 'bg-white text-slate-700 hover:bg-slate-100 border border-slate-200'
-          }`}
-        >
-          <BookOpen className="w-4 h-4" /> مقرراتي الدراسية
-        </button>
+          {/* 10 STUDENT SERVICE CARDS */}
+          <div className="space-y-4">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 border-b border-slate-200 pb-3">
+              <div>
+                <h3 className="text-xl font-black text-slate-900 flex items-center gap-2">
+                  <BookOpen className="w-5 h-5 text-[#0b2545]" />
+                  منظومة الخدمات الأكاديمية والطلابية (بطاقات الانتقال المباشر)
+                </h3>
+                <p className="text-xs text-slate-500 mt-0.5">
+                  انقر على أي بطاقة للانتقال الفوري إلى الخدمة المخصصة واستعراض كافة أدواتها وتفاصيلها
+                </p>
+              </div>
+              <span className="text-xs font-black text-slate-700 bg-white px-3 py-1 rounded-full border border-slate-200">
+                10 خدمات طلابية
+              </span>
+            </div>
 
-        <button
-          onClick={() => setActiveTab('lectures')}
-          className={`px-4 py-2.5 rounded-xl font-bold text-xs transition flex items-center gap-2 whitespace-nowrap ${
-            activeTab === 'lectures'
-              ? 'bg-[#0b2545] text-white shadow-xs'
-              : 'bg-white text-slate-700 hover:bg-slate-100 border border-slate-200'
-          }`}
-        >
-          <Video className="w-4 h-4 text-red-500" /> المحاضرات وقاعة البث ({lectures.length})
-        </button>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+              {/* Card 1: Courses */}
+              <div
+                onClick={() => setActiveTab('courses')}
+                className="bg-white p-6 rounded-3xl border-2 border-slate-200 hover:border-blue-500 hover:shadow-xl transition cursor-pointer flex flex-col justify-between space-y-4 group"
+              >
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <div className="w-12 h-12 rounded-2xl bg-blue-500/15 text-blue-800 flex items-center justify-center font-bold text-xl group-hover:scale-110 transition shadow-xs">
+                      <BookOpen className="w-6 h-6" />
+                    </div>
+                    <span className="bg-blue-100 text-blue-900 text-[10px] font-black px-2.5 py-0.5 rounded-full">
+                      6 مقررات مسجلة
+                    </span>
+                  </div>
+                  <h4 className="font-black text-base text-slate-900 group-hover:text-blue-700 transition">
+                    المقررات الدراسية والمناهج
+                  </h4>
+                  <p className="text-xs text-slate-600 leading-relaxed">
+                    استعراض المقررات المسجلة للفصل الدراسي الحالي، الساعات المعتمدة، أسماء الأساتذة، وتوصيف المقررات.
+                  </p>
+                </div>
+                <div className="pt-3 border-t border-slate-100 text-xs font-black text-blue-700 flex items-center justify-between">
+                  <span>استعراض المقررات والمناهج</span>
+                  <ChevronRight className="w-4 h-4 rotate-180 group-hover:-translate-x-1 transition" />
+                </div>
+              </div>
 
-        <button
-          onClick={() => setActiveTab('assignments')}
-          className={`px-4 py-2.5 rounded-xl font-bold text-xs transition flex items-center gap-2 whitespace-nowrap relative ${
-            activeTab === 'assignments'
-              ? 'bg-[#0b2545] text-white shadow-xs'
-              : 'bg-white text-slate-700 hover:bg-slate-100 border border-slate-200'
-          }`}
-        >
-          <FileCheck2 className="w-4 h-4 text-amber-500" />
-          <span>الواجبات والتكاليف المطورة ({assignments.length})</span>
-          {urgentDeadlinesCount > 0 && (
-            <span className="bg-red-500 text-white text-[10px] font-black px-1.5 py-0.5 rounded-full animate-pulse">
-              {urgentDeadlinesCount} عاجل
-            </span>
-          )}
-        </button>
+              {/* Card 2: Lectures */}
+              <div
+                onClick={() => setActiveTab('lectures')}
+                className="bg-white p-6 rounded-3xl border-2 border-slate-200 hover:border-red-500 hover:shadow-xl transition cursor-pointer flex flex-col justify-between space-y-4 group"
+              >
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <div className="w-12 h-12 rounded-2xl bg-red-500/15 text-red-700 flex items-center justify-center font-bold text-xl group-hover:scale-110 transition shadow-xs">
+                      <Video className="w-6 h-6" />
+                    </div>
+                    <span className="bg-red-100 text-red-800 text-[10px] font-black px-2.5 py-0.5 rounded-full">
+                      {lectures.length} محاضرات
+                    </span>
+                  </div>
+                  <h4 className="font-black text-base text-slate-900 group-hover:text-red-700 transition">
+                    المحاضرات الرقمية والفصول الافتراضية
+                  </h4>
+                  <p className="text-xs text-slate-600 leading-relaxed">
+                    حضور الدروس الأكاديمية المصورة، البث المباشر، ومتابعة الشروحات المحاسبية المسجلة مع الأساتذة.
+                  </p>
+                </div>
+                <div className="pt-3 border-t border-slate-100 text-xs font-black text-red-700 flex items-center justify-between">
+                  <span>حضور المحاضرات والدروس</span>
+                  <ChevronRight className="w-4 h-4 rotate-180 group-hover:-translate-x-1 transition" />
+                </div>
+              </div>
 
-        <button
-          onClick={() => setActiveTab('quizzes')}
-          className={`px-4 py-2.5 rounded-xl font-bold text-xs transition flex items-center gap-2 whitespace-nowrap ${
-            activeTab === 'quizzes'
-              ? 'bg-blue-900 text-white shadow-xs'
-              : 'bg-white text-slate-700 hover:bg-slate-100 border border-slate-200'
-          }`}
-        >
-          <HelpCircle className="w-4 h-4 text-emerald-500" /> الاختبارات الإلكترونية (Quizzes) ({quizzes.length})
-        </button>
+              {/* Card 3: Assignments */}
+              <div
+                onClick={() => setActiveTab('assignments')}
+                className="bg-white p-6 rounded-3xl border-2 border-slate-200 hover:border-amber-500 hover:shadow-xl transition cursor-pointer flex flex-col justify-between space-y-4 group"
+              >
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <div className="w-12 h-12 rounded-2xl bg-amber-500/15 text-amber-800 flex items-center justify-center font-bold text-xl group-hover:scale-110 transition shadow-xs">
+                      <FileCheck2 className="w-6 h-6" />
+                    </div>
+                    <span className="bg-amber-100 text-amber-900 text-[10px] font-black px-2.5 py-0.5 rounded-full">
+                      {assignments.length} واجبات
+                    </span>
+                  </div>
+                  <h4 className="font-black text-base text-slate-900 group-hover:text-amber-700 transition">
+                    الواجبات والتكاليف الدراسية المطورة
+                  </h4>
+                  <p className="text-xs text-slate-600 leading-relaxed">
+                    استلام التكاليف والمسائل، رفع الحلول بالوثائق والصور والفيديو، واستعراض تقييم وتصحيح المحاضرين.
+                  </p>
+                </div>
+                <div className="pt-3 border-t border-slate-100 text-xs font-black text-amber-700 flex items-center justify-between">
+                  <span>تسليم واستعراض الواجبات</span>
+                  <ChevronRight className="w-4 h-4 rotate-180 group-hover:-translate-x-1 transition" />
+                </div>
+              </div>
 
-        <button
-          onClick={() => setActiveTab('announcements')}
-          className={`px-4 py-2.5 rounded-xl font-bold text-xs transition flex items-center gap-2 whitespace-nowrap ${
-            activeTab === 'announcements'
-              ? 'bg-blue-900 text-white shadow-xs'
-              : 'bg-white text-slate-700 hover:bg-slate-100 border border-slate-200'
-          }`}
-        >
-          <Bell className="w-4 h-4 text-amber-500" /> لوحة الإعلانات الجامعية ({announcements.length})
-        </button>
-      </div>
+              {/* Card 4: Quizzes */}
+              <div
+                onClick={() => setActiveTab('quizzes')}
+                className="bg-white p-6 rounded-3xl border-2 border-slate-200 hover:border-purple-500 hover:shadow-xl transition cursor-pointer flex flex-col justify-between space-y-4 group"
+              >
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <div className="w-12 h-12 rounded-2xl bg-purple-500/15 text-purple-800 flex items-center justify-center font-bold text-xl group-hover:scale-110 transition shadow-xs">
+                      <HelpCircle className="w-6 h-6" />
+                    </div>
+                    <span className="bg-purple-100 text-purple-900 text-[10px] font-black px-2.5 py-0.5 rounded-full">
+                      {quizzes.length} اختبارات
+                    </span>
+                  </div>
+                  <h4 className="font-black text-base text-slate-900 group-hover:text-purple-700 transition">
+                    الاختبارات والتقييمات الإلكترونية (Quizzes)
+                  </h4>
+                  <p className="text-xs text-slate-600 leading-relaxed">
+                    خوض الاختبارات الإلكترونية بنظام التصحيح الفوري، مراجعة الأسئلة والأخطاء، وحفظ السجل الأكاديمي.
+                  </p>
+                </div>
+                <div className="pt-3 border-t border-slate-100 text-xs font-black text-purple-700 flex items-center justify-between">
+                  <span>بدء أو مراجعة الاختبارات</span>
+                  <ChevronRight className="w-4 h-4 rotate-180 group-hover:-translate-x-1 transition" />
+                </div>
+              </div>
+
+              {/* Card 5: Schedule */}
+              <div
+                onClick={() => onNavigate('schedule')}
+                className="bg-white p-6 rounded-3xl border-2 border-slate-200 hover:border-indigo-500 hover:shadow-xl transition cursor-pointer flex flex-col justify-between space-y-4 group"
+              >
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <div className="w-12 h-12 rounded-2xl bg-indigo-500/15 text-indigo-800 flex items-center justify-center font-bold text-xl group-hover:scale-110 transition shadow-xs">
+                      <Calendar className="w-6 h-6" />
+                    </div>
+                    <span className="bg-indigo-100 text-indigo-900 text-[10px] font-black px-2.5 py-0.5 rounded-full">
+                      جدول أسبوعي
+                    </span>
+                  </div>
+                  <h4 className="font-black text-base text-slate-900 group-hover:text-indigo-700 transition">
+                    الجدول الدراسي والمحاضرات الأسبوعية
+                  </h4>
+                  <p className="text-xs text-slate-600 leading-relaxed">
+                    مواعيد المحاضرات الحضورية والافتراضية، القاعات، وأيام اللقاءات التفاعلية المباشرة للفصل الدراسي.
+                  </p>
+                </div>
+                <div className="pt-3 border-t border-slate-100 text-xs font-black text-indigo-700 flex items-center justify-between">
+                  <span>عرض الجدول الأسبوعي</span>
+                  <ChevronRight className="w-4 h-4 rotate-180 group-hover:-translate-x-1 transition" />
+                </div>
+              </div>
+
+              {/* Card 6: Transcript */}
+              <div
+                onClick={() => onNavigate('transcript')}
+                className="bg-white p-6 rounded-3xl border-2 border-slate-200 hover:border-amber-500 hover:shadow-xl transition cursor-pointer flex flex-col justify-between space-y-4 group"
+              >
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <div className="w-12 h-12 rounded-2xl bg-amber-500/15 text-amber-800 flex items-center justify-center font-bold text-xl group-hover:scale-110 transition shadow-xs">
+                      <FileText className="w-6 h-6" />
+                    </div>
+                    <span className="bg-amber-100 text-amber-900 text-[10px] font-black px-2.5 py-0.5 rounded-full">
+                      GPA {student.gpa || '3.88'}
+                    </span>
+                  </div>
+                  <h4 className="font-black text-base text-slate-900 group-hover:text-amber-700 transition">
+                    السجل الأكاديمي وكشف الدرجات
+                  </h4>
+                  <p className="text-xs text-slate-600 leading-relaxed">
+                    كشف الدرجات الأكاديمي المعتمد مع تفاصيل المعدل الفصلي والتراكمي والمقررات المجتازة بنجاح.
+                  </p>
+                </div>
+                <div className="pt-3 border-t border-slate-100 text-xs font-black text-amber-700 flex items-center justify-between">
+                  <span>استعراض كشف الدرجات</span>
+                  <ChevronRight className="w-4 h-4 rotate-180 group-hover:-translate-x-1 transition" />
+                </div>
+              </div>
+
+              {/* Card 7: Certificates */}
+              <div
+                onClick={() => onNavigate('certificates')}
+                className="bg-white p-6 rounded-3xl border-2 border-slate-200 hover:border-emerald-500 hover:shadow-xl transition cursor-pointer flex flex-col justify-between space-y-4 group"
+              >
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <div className="w-12 h-12 rounded-2xl bg-emerald-500/15 text-emerald-800 flex items-center justify-center font-bold text-xl group-hover:scale-110 transition shadow-xs">
+                      <Award className="w-6 h-6" />
+                    </div>
+                    <span className="bg-emerald-100 text-emerald-900 text-[10px] font-black px-2.5 py-0.5 rounded-full">
+                      إفادات وشهادات
+                    </span>
+                  </div>
+                  <h4 className="font-black text-base text-slate-900 group-hover:text-emerald-700 transition">
+                    طلب الشهادات والإفادات الرسمية
+                  </h4>
+                  <p className="text-xs text-slate-600 leading-relaxed">
+                    طلب إفادة القيد الجامعي وشهادات التخرج الإلكترونية المعتمدة بالباركود التوثيقي والأختام.
+                  </p>
+                </div>
+                <div className="pt-3 border-t border-slate-100 text-xs font-black text-emerald-700 flex items-center justify-between">
+                  <span>طلب أو طباعة شهادة</span>
+                  <ChevronRight className="w-4 h-4 rotate-180 group-hover:-translate-x-1 transition" />
+                </div>
+              </div>
+
+              {/* Card 8: Fees */}
+              <div
+                onClick={() => onNavigate('fees')}
+                className="bg-white p-6 rounded-3xl border-2 border-slate-200 hover:border-emerald-500 hover:shadow-xl transition cursor-pointer flex flex-col justify-between space-y-4 group"
+              >
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <div className="w-12 h-12 rounded-2xl bg-emerald-500/15 text-emerald-800 flex items-center justify-center font-bold text-xl group-hover:scale-110 transition shadow-xs">
+                      <TrendingUp className="w-6 h-6" />
+                    </div>
+                    <span className="bg-emerald-100 text-emerald-900 text-[10px] font-black px-2.5 py-0.5 rounded-full">
+                      سداد إلكتروني
+                    </span>
+                  </div>
+                  <h4 className="font-black text-base text-slate-900 group-hover:text-emerald-700 transition">
+                    سداد الرسوم وسندات القبض
+                  </h4>
+                  <p className="text-xs text-slate-600 leading-relaxed">
+                    سداد الرسوم الدراسية عبر تطبيق بنكك وفوري، واستخراج سند القبض المالي المعتمد والمختوم فوراً.
+                  </p>
+                </div>
+                <div className="pt-3 border-t border-slate-100 text-xs font-black text-emerald-700 flex items-center justify-between">
+                  <span>بوابة الدفع وسند القبض</span>
+                  <ChevronRight className="w-4 h-4 rotate-180 group-hover:-translate-x-1 transition" />
+                </div>
+              </div>
+
+              {/* Card 9: Student Card */}
+              <div
+                onClick={() => onOpenStudentCard && onOpenStudentCard()}
+                className="bg-white p-6 rounded-3xl border-2 border-slate-200 hover:border-blue-500 hover:shadow-xl transition cursor-pointer flex flex-col justify-between space-y-4 group"
+              >
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <div className="w-12 h-12 rounded-2xl bg-blue-500/15 text-blue-800 flex items-center justify-center font-bold text-xl group-hover:scale-110 transition shadow-xs">
+                      <IdCard className="w-6 h-6" />
+                    </div>
+                    <span className="bg-blue-100 text-blue-900 text-[10px] font-black px-2.5 py-0.5 rounded-full">
+                      بطاقة الطالب
+                    </span>
+                  </div>
+                  <h4 className="font-black text-base text-slate-900 group-hover:text-blue-700 transition">
+                    البطاقة الجامعية الإلكترونية الرسمية
+                  </h4>
+                  <p className="text-xs text-slate-600 leading-relaxed">
+                    استعراض وطباعة بطاقة الطالب الجامعية الرسمية المحدثة بالشعار والباركود ورقم القيد وصورة الطالب.
+                  </p>
+                </div>
+                <div className="pt-3 border-t border-slate-100 text-xs font-black text-blue-700 flex items-center justify-between">
+                  <span>عرض البطاقة الجامعية</span>
+                  <ChevronRight className="w-4 h-4 rotate-180 group-hover:-translate-x-1 transition" />
+                </div>
+              </div>
+
+              {/* Card 10: Announcements */}
+              <div
+                onClick={() => setActiveTab('announcements')}
+                className="bg-white p-6 rounded-3xl border-2 border-slate-200 hover:border-amber-500 hover:shadow-xl transition cursor-pointer flex flex-col justify-between space-y-4 group"
+              >
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <div className="w-12 h-12 rounded-2xl bg-amber-500/15 text-amber-800 flex items-center justify-center font-bold text-xl group-hover:scale-110 transition shadow-xs">
+                      <Bell className="w-6 h-6" />
+                    </div>
+                    <span className="bg-amber-100 text-amber-900 text-[10px] font-black px-2.5 py-0.5 rounded-full">
+                      {announcements.length} إعلانات
+                    </span>
+                  </div>
+                  <h4 className="font-black text-base text-slate-900 group-hover:text-amber-700 transition">
+                    المركز الإعلامي والتعاميم الطلابية
+                  </h4>
+                  <p className="text-xs text-slate-600 leading-relaxed">
+                    متابعة قرارات الكلية، مواعيد الامتحانات، الجداول، والتعاميم الصادرة من أمانة الشؤون العلمية.
+                  </p>
+                </div>
+                <div className="pt-3 border-t border-slate-100 text-xs font-black text-amber-700 flex items-center justify-between">
+                  <span>عرض لوحة الإعلانات</span>
+                  <ChevronRight className="w-4 h-4 rotate-180 group-hover:-translate-x-1 transition" />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* 2. WHEN IN DEDICATED SUBPAGE: RENDER HEADER WITH RETURN TO SERVICES HUB BUTTON */}
+      {activeTab !== 'hub' && (
+        <div className="space-y-4">
+          <div className="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200 shadow-xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+            <div className="flex items-center gap-3">
+              <button
+                onClick={() => setActiveTab('hub')}
+                className="bg-[#0b2545] hover:bg-[#133e68] text-white px-4 py-2 rounded-xl text-xs font-black transition flex items-center gap-2 shadow-xs group"
+              >
+                <ChevronRight className="w-4 h-4 group-hover:translate-x-0.5 transition" />
+                <span>العودة لكافة خدمات الطالب</span>
+              </button>
+              <div className="text-xs text-slate-500">
+                <span>بوابة الطالب</span> /{' '}
+                <span className="font-bold text-slate-900">
+                  {activeTab === 'courses' && 'المقررات الدراسية'}
+                  {activeTab === 'lectures' && 'المحاضرات وقاعة البث'}
+                  {activeTab === 'assignments' && 'الواجبات والتكاليف'}
+                  {activeTab === 'quizzes' && 'الاختبارات الإلكترونية'}
+                  {activeTab === 'announcements' && 'لوحة الإعلانات الجامعية'}
+                </span>
+              </div>
+            </div>
+
+            {/* Subpage Switcher Tabs */}
+            <div className="flex items-center gap-2 overflow-x-auto pb-1 custom-scrollbar w-full sm:w-auto">
+              <button
+                onClick={() => setActiveTab('courses')}
+                className={`px-3 py-1.5 rounded-xl font-bold text-xs transition flex items-center gap-1.5 whitespace-nowrap ${
+                  activeTab === 'courses'
+                    ? 'bg-[#0b2545] text-white shadow-xs'
+                    : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+                }`}
+              >
+                <BookOpen className="w-3.5 h-3.5" /> المقررات
+              </button>
+              <button
+                onClick={() => setActiveTab('lectures')}
+                className={`px-3 py-1.5 rounded-xl font-bold text-xs transition flex items-center gap-1.5 whitespace-nowrap ${
+                  activeTab === 'lectures'
+                    ? 'bg-red-600 text-white shadow-xs'
+                    : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+                }`}
+              >
+                <Video className="w-3.5 h-3.5" /> المحاضرات ({lectures.length})
+              </button>
+              <button
+                onClick={() => setActiveTab('assignments')}
+                className={`px-3 py-1.5 rounded-xl font-bold text-xs transition flex items-center gap-1.5 whitespace-nowrap ${
+                  activeTab === 'assignments'
+                    ? 'bg-amber-600 text-white shadow-xs'
+                    : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+                }`}
+              >
+                <FileCheck2 className="w-3.5 h-3.5" /> الواجبات ({assignments.length})
+              </button>
+              <button
+                onClick={() => setActiveTab('quizzes')}
+                className={`px-3 py-1.5 rounded-xl font-bold text-xs transition flex items-center gap-1.5 whitespace-nowrap ${
+                  activeTab === 'quizzes'
+                    ? 'bg-purple-600 text-white shadow-xs'
+                    : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+                }`}
+              >
+                <HelpCircle className="w-3.5 h-3.5" /> الاختبارات ({quizzes.length})
+              </button>
+              <button
+                onClick={() => setActiveTab('announcements')}
+                className={`px-3 py-1.5 rounded-xl font-bold text-xs transition flex items-center gap-1.5 whitespace-nowrap ${
+                  activeTab === 'announcements'
+                    ? 'bg-blue-600 text-white shadow-xs'
+                    : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+                }`}
+              >
+                <Bell className="w-3.5 h-3.5" /> الإعلانات ({announcements.length})
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* TAB 1: COURSES */}
       {activeTab === 'courses' && (
@@ -452,14 +818,9 @@ export const StudentPortal: React.FC<StudentPortalProps> = ({ student, onNavigat
                   شاهد المحاضرات الأكاديمية المصورة عبر مشغل الفيديو المدمج مع المواد الإثرائية
                 </p>
               </div>
-              <a
-                href="https://www.youtube.com/@drama7sd"
-                target="_blank"
-                rel="noreferrer"
-                className="bg-red-50 hover:bg-red-100 text-red-600 border border-red-200 px-3.5 py-2 rounded-xl text-xs font-bold transition flex items-center gap-2"
-              >
-                <Play className="w-3.5 h-3.5 fill-current" /> قناة الكلية الرسمية (@drama7sd)
-              </a>
+              <span className="bg-red-50 text-red-700 border border-red-200 px-3.5 py-1.5 rounded-xl text-xs font-bold inline-flex items-center gap-1.5">
+                <CheckCircle2 className="w-3.5 h-3.5 text-red-600" /> محاضرات معتمدة للفصل الحالي
+              </span>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">

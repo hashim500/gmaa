@@ -19,6 +19,7 @@ import {
   Building,
 } from 'lucide-react';
 import { CollegeLogo } from './CollegeLogo';
+import { QuickAccessIconsBar } from './QuickAccessIconsBar';
 import { UserRole, Announcement, Lecture } from '../types';
 
 interface HomeViewProps {
@@ -65,13 +66,22 @@ export const HomeView: React.FC<HomeViewProps> = ({
             {/* Quick Portals Entry Buttons */}
             <div className="pt-2 flex flex-wrap items-center justify-center lg:justify-start gap-3">
               <button
+                onClick={() => onNavigate('registration')}
+                id="hero-register-portal-btn"
+                className="bg-gradient-to-r from-amber-400 via-amber-500 to-amber-600 hover:from-amber-500 hover:to-amber-700 text-slate-950 font-black px-6 py-3.5 rounded-2xl text-xs sm:text-sm shadow-xl transition flex items-center gap-2 group border-2 border-amber-300"
+              >
+                <GraduationCap className="w-5 h-5 text-slate-950 group-hover:scale-110 transition" />
+                <span>تسجيل طالب جديد للالتحاق بالكلية</span>
+                <ArrowRight className="w-4 h-4 rotate-180 text-slate-950" />
+              </button>
+
+              <button
                 onClick={() => onOpenLogin('student')}
                 id="hero-student-portal-btn"
                 className="bg-[#0b2545] hover:bg-[#133e68] text-white border border-[#c59b6d]/50 px-5 py-3.5 rounded-2xl font-black text-xs sm:text-sm shadow-xl transition flex items-center gap-2 group"
               >
                 <GraduationCap className="w-5 h-5 text-amber-300 group-hover:scale-110 transition" />
                 <span>دخول بوابة الطالب</span>
-                <ArrowRight className="w-4 h-4 rotate-180 text-amber-300" />
               </button>
 
               <button
@@ -154,6 +164,12 @@ export const HomeView: React.FC<HomeViewProps> = ({
         </div>
       </section>
 
+      {/* 6 CIRCULAR QUICK ACCESS ICONS (مثل موقع الجامعة العربية المفتوحة بالسودان - Image 1 & Image 3) */}
+      <QuickAccessIconsBar
+        onNavigate={onNavigate}
+        onOpenLogin={(role) => onOpenLogin(role || 'student')}
+      />
+
       {/* NEW SECTION: ANNOUNCING PROPOSED SYSTEMS */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="bg-gradient-to-r from-amber-50 via-white to-amber-50 border border-amber-200 rounded-3xl p-6 sm:p-8 shadow-xs">
@@ -216,7 +232,7 @@ export const HomeView: React.FC<HomeViewProps> = ({
             </div>
             <h3 className="font-black text-base text-slate-900">بوابة الطالب والمحاضرات</h3>
             <p className="text-xs text-slate-600 leading-relaxed">
-              مشاهدة المحاضرات الأونلاين عبر يوتيوب، استلام الواجبات، رفع الحلول المتنوعة، ومتابعة النتائج التفاعلية.
+              حضور المحاضرات والدروس الأكاديمية المسجلة، استلام الواجبات، رفع الحلول المتنوعة، ومتابعة النتائج التفاعلية.
             </p>
             <div className="pt-2 text-xs font-bold text-[#0b2545] flex items-center gap-1">
               <span>الدخول للبوابة</span>
@@ -234,7 +250,7 @@ export const HomeView: React.FC<HomeViewProps> = ({
             </div>
             <h3 className="font-black text-base text-slate-900">لوحة تحكم المعلم</h3>
             <p className="text-xs text-slate-600 leading-relaxed">
-              جدولة المحاضرات بروابط يوتيوب، طرح الواجبات بالنص والفيديو والصور والملفات، واستعراض الحلول وتصحيحها.
+              جدولة المحاضرات والدروس الرقمية، طرح الواجبات بالنص والفيديو والصور والملفات، واستعراض الحلول وتصحيحها.
             </p>
             <div className="pt-2 text-xs font-bold text-slate-800 flex items-center gap-1">
               <span>الدخول للبوابة</span>
@@ -280,63 +296,56 @@ export const HomeView: React.FC<HomeViewProps> = ({
         </div>
       </section>
 
-      {/* LATEST ONLINE LECTURES SHOWCASE */}
+      {/* DEDICATED VISION & MISSION SHOWCASE - LINKS TO FULL DEDICATED PAGE */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="bg-[#0b2545] text-white rounded-3xl p-6 sm:p-10 space-y-6 border border-slate-800">
-          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-white/10 pb-5">
-            <div>
-              <div className="flex items-center gap-2">
-                <span className="w-2.5 h-2.5 rounded-full bg-red-500 animate-pulse"></span>
-                <span className="text-amber-400 font-bold text-xs">قناة الكلية وبث المحاضرات</span>
-              </div>
-              <h3 className="text-xl sm:text-2xl font-black text-white mt-1">
-                أحدث المحاضرات الأكاديمية المصورة على يوتيوب
-              </h3>
-              <p className="text-xs text-slate-300 mt-1">
-                يمكن للطلاب متابعة الدروس مباشرة داخل المنصة أو عبر قناة الكلية الرسمية (@drama7sd)
+        <div className="bg-gradient-to-br from-[#06182c] via-[#0b2545] to-[#164472] text-white rounded-3xl border-2 border-[#c59b6d] p-8 sm:p-12 shadow-xl relative overflow-hidden">
+          <div className="absolute inset-0 opacity-10 bg-[radial-gradient(#fae588_1.2px,transparent_1.2px)] [background-size:24px_24px] pointer-events-none"></div>
+
+          <div className="relative z-10 flex flex-col lg:flex-row items-center justify-between gap-8">
+            <div className="space-y-4 text-center lg:text-right max-w-3xl">
+              <span className="text-xs font-black text-amber-300 bg-amber-400/20 border border-amber-300/40 px-3.5 py-1 rounded-full inline-block">
+                الهوية الأكاديمية والتوجه الاستراتيجي
+              </span>
+              <h2 className="text-2xl sm:text-4xl font-black text-white leading-tight">
+                الرؤية والرسالة لكلية السودان الجديد للمحاسبة
+              </h2>
+              <p className="text-xs sm:text-base text-slate-200 leading-relaxed">
+                الريادة في تقديم تعليم محاسبي أكاديمي ومهني متميز، يسهم في إعداد كوادر وطنية مؤهلة وقادرة على مواكبة التطورات العلمية والتقنية، والمنافسة بقوة في سوق العمل محليًا وإقليميًا ودوليًا وفقًا للمعايير الأكاديمية والمهنية المعتمدة.
               </p>
+
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2">
+                <div className="bg-white/10 backdrop-blur-xs p-3.5 rounded-2xl border border-white/10 text-right">
+                  <span className="text-amber-300 font-black text-xs block">🎯 الرؤية الأكاديمية</span>
+                  <span className="text-[11px] text-slate-300">الريادة والتميز المحاسبي الدولي (IFRS)</span>
+                </div>
+                <div className="bg-white/10 backdrop-blur-xs p-3.5 rounded-2xl border border-white/10 text-right">
+                  <span className="text-amber-300 font-black text-xs block">📜 الرسالة والأهداف</span>
+                  <span className="text-[11px] text-slate-300">تأهيل كوادر تجمع الرصانة والتطبيق</span>
+                </div>
+                <div className="bg-white/10 backdrop-blur-xs p-3.5 rounded-2xl border border-white/10 text-right">
+                  <span className="text-amber-300 font-black text-xs block">💎 القيم المؤسسية</span>
+                  <span className="text-[11px] text-slate-300">النزاهة، الجودة، والتحول الرقمي الذكي</span>
+                </div>
+              </div>
             </div>
 
-            <a
-              href="https://www.youtube.com/@drama7sd"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="bg-red-600 hover:bg-red-700 text-white px-4 py-2.5 rounded-xl font-bold text-xs transition flex items-center gap-2 shadow-sm"
-            >
-              <ExternalLink className="w-4 h-4" /> زيارة قناة الكلية (@drama7sd)
-            </a>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {lectures.slice(0, 3).map((lec) => (
-              <div
-                key={lec.id}
-                className="bg-slate-900/80 hover:bg-slate-900 border border-white/10 rounded-2xl p-5 space-y-3 transition flex flex-col justify-between"
+            <div className="flex flex-col sm:flex-row lg:flex-col items-center gap-3 flex-shrink-0 w-full lg:w-auto">
+              <button
+                onClick={() => onNavigate('vision-mission')}
+                className="w-full sm:w-auto bg-gradient-to-r from-amber-400 via-amber-500 to-amber-600 hover:from-amber-500 hover:to-amber-700 text-slate-950 font-black px-6 py-3.5 rounded-2xl text-xs sm:text-sm shadow-xl transition flex items-center justify-center gap-2 group border-2 border-amber-300"
               >
-                <div className="space-y-2">
-                  <div className="flex items-center justify-between">
-                    <span className="text-[10px] font-bold text-amber-300 bg-amber-400/10 border border-amber-400/20 px-2 py-0.5 rounded">
-                      {lec.course}
-                    </span>
-                    <span className="text-[10px] text-slate-400 flex items-center gap-1">
-                      <Calendar className="w-3 h-3" /> {lec.date}
-                    </span>
-                  </div>
-                  <h4 className="font-bold text-sm text-white line-clamp-2">{lec.title}</h4>
-                  <p className="text-xs text-slate-300 line-clamp-2">{lec.description}</p>
-                </div>
+                <span>الانتقال لصفحة الرؤية والرسالة كاملة</span>
+                <ArrowRight className="w-4 h-4 rotate-180 group-hover:-translate-x-1 transition" />
+              </button>
 
-                <div className="pt-3 border-t border-white/10 flex items-center justify-between">
-                  <span className="text-[11px] text-slate-300">{lec.instructor}</span>
-                  <button
-                    onClick={() => onSelectLecture(lec)}
-                    className="bg-[#c59b6d] hover:bg-[#b2834c] text-[#0b2545] px-3.5 py-1.5 rounded-xl text-xs font-black transition flex items-center gap-1 shadow-xs"
-                  >
-                    <Play className="w-3.5 h-3.5 fill-current" /> تشغيل الدرس
-                  </button>
-                </div>
-              </div>
-            ))}
+              <button
+                onClick={() => onNavigate('programs-accounting')}
+                className="w-full sm:w-auto bg-white/10 hover:bg-white/20 text-white border border-white/20 px-5 py-3 rounded-2xl text-xs font-bold transition flex items-center justify-center gap-2"
+              >
+                <BookOpen className="w-4 h-4 text-amber-300" />
+                <span>استعراض البرامج الأكاديمية</span>
+              </button>
+            </div>
           </div>
         </div>
       </section>
@@ -354,41 +363,68 @@ export const HomeView: React.FC<HomeViewProps> = ({
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="p-6 rounded-2xl bg-slate-50 border border-slate-200 space-y-3">
-              <div className="w-10 h-10 rounded-xl bg-[#0b2545] text-amber-300 flex items-center justify-center font-black text-lg">
-                1
+            <button
+              onClick={() => onNavigate('programs-accounting')}
+              className="p-6 rounded-2xl bg-slate-50 border border-slate-200 hover:border-amber-400 hover:shadow-md transition space-y-3 text-right group flex flex-col justify-between"
+            >
+              <div className="space-y-3">
+                <div className="w-10 h-10 rounded-xl bg-[#0b2545] text-amber-300 flex items-center justify-center font-black text-lg group-hover:scale-105 transition">
+                  1
+                </div>
+                <h4 className="font-black text-base text-slate-900 group-hover:text-[#0b2545] transition">
+                  بكالوريوس المحاسبة والتمويل
+                </h4>
+                <p className="text-xs text-slate-600 leading-relaxed">
+                  برنامج متكامل لمدة 4 سنوات (136 ساعة معتمدة) يركز على المحاسبة المالية، المراجعة والتدقيق، ومعايير إعداد التقارير الدولية IFRS.
+                </p>
               </div>
-              <h4 className="font-black text-base text-slate-900">
-                بكالوريوس المحاسبة ونظم المعلومات المالية
-              </h4>
-              <p className="text-xs text-slate-600 leading-relaxed">
-                برنامج متكامل لمدة 4 سنوات يركز على المحاسبة المحوسبة، أنظمة ERP، ومراجعة وتدقيق قواعد البيانات المالية في الشركات والمنظمات.
-              </p>
-            </div>
+              <div className="text-[11px] font-black text-[#8a6135] pt-2 flex items-center gap-1">
+                <span>استعراض المتطلبات والخطة الدراسية</span>
+                <ArrowRight className="w-3.5 h-3.5 rotate-180" />
+              </div>
+            </button>
 
-            <div className="p-6 rounded-2xl bg-slate-50 border border-slate-200 space-y-3">
-              <div className="w-10 h-10 rounded-xl bg-[#c59b6d] text-[#0b2545] flex items-center justify-center font-black text-lg">
-                2
+            <button
+              onClick={() => onNavigate('programs-ais')}
+              className="p-6 rounded-2xl bg-slate-50 border border-slate-200 hover:border-blue-400 hover:shadow-md transition space-y-3 text-right group flex flex-col justify-between"
+            >
+              <div className="space-y-3">
+                <div className="w-10 h-10 rounded-xl bg-blue-700 text-white flex items-center justify-center font-black text-lg group-hover:scale-105 transition">
+                  2
+                </div>
+                <h4 className="font-black text-base text-slate-900 group-hover:text-blue-700 transition">
+                  بكالوريوس نظم المعلومات المحاسبية
+                </h4>
+                <p className="text-xs text-slate-600 leading-relaxed">
+                  دمج تقنيات المحاسبة والتحول الرقمي، أنظمة تخطيط المؤسسات ERP، وتدقيق قواعد البيانات المالية السحابية (138 ساعة معتمدة).
+                </p>
               </div>
-              <h4 className="font-black text-base text-slate-900">
-                الدبلوم المهني العالي في محاسبة التجارة الإلكترونية
-              </h4>
-              <p className="text-xs text-slate-600 leading-relaxed">
-                تأهيل عملي مركز للمحاسبين والمهنيين في معالجة بوابات الدفع، الضرائب الرقمية، إدارة التدفقات النقدية السحابية والتسويات البنكية.
-              </p>
-            </div>
+              <div className="text-[11px] font-black text-blue-700 pt-2 flex items-center gap-1">
+                <span>استعراض المتطلبات والخطة الدراسية</span>
+                <ArrowRight className="w-3.5 h-3.5 rotate-180" />
+              </div>
+            </button>
 
-            <div className="p-6 rounded-2xl bg-slate-50 border border-slate-200 space-y-3">
-              <div className="w-10 h-10 rounded-xl bg-emerald-700 text-white flex items-center justify-center font-black text-lg">
-                3
+            <button
+              onClick={() => onNavigate('programs-tax')}
+              className="p-6 rounded-2xl bg-slate-50 border border-slate-200 hover:border-emerald-400 hover:shadow-md transition space-y-3 text-right group flex flex-col justify-between"
+            >
+              <div className="space-y-3">
+                <div className="w-10 h-10 rounded-xl bg-emerald-700 text-white flex items-center justify-center font-black text-lg group-hover:scale-105 transition">
+                  3
+                </div>
+                <h4 className="font-black text-base text-slate-900 group-hover:text-emerald-700 transition">
+                  دبلوم المحاسبة والمراجعة الضريبية
+                </h4>
+                <p className="text-xs text-slate-600 leading-relaxed">
+                  تأهيل عملي مركز لمدة سنتين (68 ساعة معتمدة) في مسك الدفاتر، إعداد الإقرارات الضريبية، وحسابات القيمة المضافة والزكاة.
+                </p>
               </div>
-              <h4 className="font-black text-base text-slate-900">
-                برنامج زمالة المعايير المحاسبية الدولية (IFRS)
-              </h4>
-              <p className="text-xs text-slate-600 leading-relaxed">
-                إعداد المحاسبين لنيل الشهادات المهنية الدولية، وتطبيق المعايير المحدثة لإعداد التقارير المالية ومراجعة الحسابات القانونية.
-              </p>
-            </div>
+              <div className="text-[11px] font-black text-emerald-700 pt-2 flex items-center gap-1">
+                <span>استعراض المتطلبات والخطة الدراسية</span>
+                <ArrowRight className="w-3.5 h-3.5 rotate-180" />
+              </div>
+            </button>
           </div>
         </div>
       </section>

@@ -246,7 +246,7 @@ export const printCertificateDocument = (cert: CertificateRequest) => {
 
       <div class="cert-container">
         <div class="watermark-bg">
-          <img src="/college_logo.jpg" alt="" />
+          <img src="/college_logo.png" alt="" />
         </div>
 
         <div class="content-relative">
@@ -259,7 +259,7 @@ export const printCertificateDocument = (cert: CertificateRequest) => {
             </div>
 
             <div class="logo-box">
-              <img src="/college_logo.jpg" class="logo-img" alt="شعار كلية السودان الجديد للمحاسبة" />
+              <img src="/college_logo.png" class="logo-img" alt="شعار كلية السودان الجديد للمحاسبة" />
             </div>
 
             <div class="header-en">
@@ -515,7 +515,7 @@ export const printInvoiceDocument = (payment: FeePayment) => {
 
       <div class="receipt-container">
         <div class="watermark">
-          <img src="/college_logo.jpg" alt="" />
+          <img src="/college_logo.png" alt="" />
         </div>
 
         <div class="header">
@@ -524,7 +524,7 @@ export const printInvoiceDocument = (payment: FeePayment) => {
             <div style="font-size: 10px; color: #64748b;">الإدارة المالية والحسابات • الخزينة الإلكترونية</div>
           </div>
           <div>
-            <img src="/college_logo.jpg" class="logo-img" alt="شعار الكلية" />
+            <img src="/college_logo.png" class="logo-img" alt="شعار الكلية" />
           </div>
           <div style="text-align: left; direction: ltr; font-size: 10px;">
             <div style="font-weight: bold; color: #0b2545;">New Sudan College of Accountancy</div>
@@ -811,7 +811,7 @@ export const printTranscriptDocument = (transcript: StudentTranscript) => {
 
       <div class="transcript-container">
         <div class="watermark">
-          <img src="/college_logo.jpg" alt="" />
+          <img src="/college_logo.png" alt="" />
         </div>
 
         <div class="header">
@@ -821,7 +821,7 @@ export const printTranscriptDocument = (transcript: StudentTranscript) => {
             <div style="font-size: 11px; color: #8a6135; font-weight: bold;">أمانة الشؤون العلمية - السجل الأكاديمي للطلاب</div>
           </div>
           <div>
-            <img src="/college_logo.jpg" class="logo-img" alt="شعار الكلية" />
+            <img src="/college_logo.png" class="logo-img" alt="شعار الكلية" />
           </div>
           <div style="text-align: left; direction: ltr; font-size: 10px;">
             <div style="font-weight: bold; color: #0b2545;">NEW SUDAN COLLEGE OF ACCOUNTANCY</div>

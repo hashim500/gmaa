@@ -1,6 +1,6 @@
 {
-  "name": "PdfDoer",
-  "description": "A client-side, privacy-focused PDF processing web application with tools to merge, split, rotate, organize, convert, watermark, and edit PDFs directly in your browser.",
+  "name": "كلية السودان الجديد للمحاسبة",
+  "description": "المنصة الإلكترونية الذكية التفاعلية لكلية السودان الجديد للمحاسبة - إدارة المحاضرات والواجبات والاختبارات والرسوم والشهادات",
   "requestFramePermissions": [],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }

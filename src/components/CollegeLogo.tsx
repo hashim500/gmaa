@@ -37,15 +37,15 @@ export const CollegeLogo: React.FC<CollegeLogoProps> = ({
       } ${className}`}
     >
       <div
-        className={`relative flex-shrink-0 ${sizeClasses[size]} drop-shadow-md rounded-2xl overflow-hidden flex items-center justify-center`}
+        className={`relative flex-shrink-0 ${sizeClasses[size]} flex items-center justify-center`}
       >
         {useImage ? (
           <img
-            src="/college_logo.jpg"
+            src="/college_logo.png"
             alt="شعار كلية السودان الجديد للمحاسبة - New Sudan College of Accountancy"
             referrerPolicy="no-referrer"
             onError={() => setImgError(true)}
-            className="w-full h-full object-contain rounded-xl select-none"
+            className="w-full h-full object-contain select-none drop-shadow-sm"
           />
         ) : (
           <svg
