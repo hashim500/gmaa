@@ -1,227 +1,149 @@
-export type UserRole = 'student' | 'instructor' | 'admin';
+export type SupportedLanguage = 'ar' | 'en' | 'es' | 'hi' | 'ur';
 
-export interface User {
+export type LegalPageId =
+  | 'privacy'
+  | 'terms'
+  | 'about'
+  | 'contact'
+  | 'cookies'
+  | 'disclaimer';
+
+export type ToolId =
+  | 'merge'
+  | 'split'
+  | 'rotate'
+  | 'organize'
+  | 'image-to-pdf'
+  | 'pdf-to-image'
+  | 'watermark'
+  | 'protect'
+  | 'edit'
+  | 'compress'
+  | 'search-text'
+  | 'cv-builder'
+  | 'cv-modern'
+  | 'cv-table'
+  | 'cv-classic'
+  | 'badge-generator'
+  | 'stamp-remover'
+  | 'image-tools'
+  | 'text-tools'
+  | 'qr-generator'
+  | 'redact'
+  | 'sign'
+  | 'ocr'
+  | 'id-photo'
+  | 'hijri'
+  | 'metadata-cleaner'
+  | 'invoice'
+  | 'voucher'
+  | 'vat-calculator'
+  | 'tafqeet'
+  | 'nup'
+  | 'pdf-grayscale'
+  | 'image-watermark'
+  | 'social-crop'
+  | 'stitch-images'
+  | 'date-calculator'
+  | 'clearance'
+  | 'payroll'
+  | 'text-crypto'
+  | 'word-counter'
+  | 'text-compare'
+  | 'page-numbering'
+  | 'text-cleaner';
+
+export interface ToolDefinition {
+  id: ToolId;
+  titleKey: string;
+  descriptionKey: string;
+  badgeKey?: string;
+  iconName: string;
+  category: 'organize' | 'convert' | 'security' | 'edit' | 'search' | 'cv' | 'badge' | 'text' | 'utility' | 'business';
+}
+
+export interface UploadedFileItem {
   id: string;
+  file: File;
   name: string;
-  email: string;
-  role: UserRole;
-  studentId?: string;
-  department: string;
-  level?: string;
-  avatarUrl?: string;
-  phone?: string;
+  size: number;
+  pageCount?: number;
+  previewUrl?: string;
 }
 
-export interface Lecture {
-  id: string;
-  title: string;
-  course: string;
-  instructor: string;
-  date?: string;
-  time?: string;
-  duration: string;
-  youtubeUrl?: string;
-  videoId?: string;
-  youtubeId?: string;
-  isLive?: boolean;
-  description: string;
-  resources?: { name: string; url: string; size: string }[];
+export interface PDFPageInfo {
+  pageIndex: number; // 0-based
+  pageNumber: number; // 1-based
+  rotation: number; // 0, 90, 180, 270
+  previewUrl?: string;
+  deleted?: boolean;
 }
 
-
-
-export type AssignmentFormat = 'text_only' | 'video' | 'image' | 'document' | 'general';
-export type SubmissionFormat = 'video' | 'image' | 'document' | 'text';
-
-export interface Assignment {
+export interface SplitRange {
   id: string;
-  title: string;
-  course: string;
-  instructor: string;
-  dueDate: string;
-  maxScore: number;
-  description: string;
-  instructions: string;
-  type?: 'text' | 'video' | 'image' | 'file';
-  fileName?: string;
-  format?: AssignmentFormat;
-  mediaType?: 'video' | 'image' | 'document' | 'none';
-  mediaUrl?: string;
-  mediaTitle?: string;
-  attachments?: string[];
-  createdAt: string;
+  from: number;
+  to: number;
 }
 
-export interface Submission {
+export interface AnnotationItem {
   id: string;
-  assignmentId: string;
-  assignmentTitle: string;
-  course: string;
-  studentId: string;
-  studentName: string;
-  submissionDate: string;
-  notes: string;
-  fileType?: 'document' | 'image' | 'video' | 'text';
-  submissionType?: SubmissionFormat;
-  fileName: string;
-  fileSize?: string;
-  fileData?: string; // base64 or simulated content / image preview URL
-  mediaUrl?: string;
-  status: 'submitted' | 'graded';
-  score?: number;
-  feedback?: string;
-  gradedAt?: string;
-  gradedBy?: string;
-}
-
-export interface QuizQuestion {
-  id: string;
-  text: string;
-  options: string[];
-  correctOption: number;
-  points: number;
-  explanation?: string;
-}
-
-export interface ScheduleItem {
-  id: string;
-  dayOfWeek: 'sunday' | 'monday' | 'tuesday' | 'wednesday' | 'thursday' | 'friday' | 'saturday';
-  dayNameAr: string;
-  course: string;
-  instructor: string;
-  time: string;
-  duration: string;
-  roomOrLink: string;
-  lectureId?: string;
-  order: number;
-  isCompleted?: boolean;
-  notes?: string;
+  type: 'text' | 'drawing' | 'highlight' | 'rectangle' | 'redact' | 'image';
+  pageIndex: number;
+  x: number; // percentage 0-100
+  y: number; // percentage 0-100
+  width?: number;
+  height?: number;
+  text?: string;
+  fontSize?: number;
   color?: string;
+  backgroundColor?: string;
+  isBold?: boolean;
+  points?: { x: number; y: number }[];
+  lineWidth?: number;
+  opacity?: number;
+  imageData?: string;
 }
 
-export interface Quiz {
+export interface SearchMatchItem {
+  pageNumber: number; // 1-based
+  matchCount: number;
+  snippets: string[];
+}
+
+export interface ProcessingState {
+  isProcessing: boolean;
+  progress: number; // 0 - 100
+  statusMessage: string;
+}
+
+export interface ProcessedResult {
+  blob: Blob;
+  filename: string;
+  originalSize?: number;
+  newSize?: number;
+  type: 'pdf' | 'zip' | 'image' | 'text';
+}
+
+export type RedactEffectType =
+  | 'black'
+  | 'white'
+  | 'blur'
+  | 'label'
+  | 'transparent'
+  | 'strike'
+  | 'red'
+  | 'custom';
+
+export interface RedactBoxItem {
   id: string;
-  title: string;
-  course: string;
-  durationMinutes: number;
-  totalScore: number;
-  questions: QuizQuestion[];
-  createdAt: string;
-}
-
-export interface QuizResult {
-  id: string;
-  quizId: string;
-  quizTitle: string;
-  studentId: string;
-  studentName: string;
-  score: number;
-  totalScore: number;
-  percentage: number;
-  submittedAt: string;
-  answers: Record<string, number>;
-}
-
-export interface CertificateRequest {
-  id: string;
-  studentName: string;
-  studentId: string;
-  nationalId?: string;
-  certType: string;
-  deliveryMethod: 'digital' | 'in_person';
-  notes?: string;
-  status: 'pending' | 'approved' | 'ready';
-  requestedAt: string;
-  serialNumber: string;
-  approvedAt?: string;
-  gpa?: string;
-  graduationYear?: string;
-}
-
-export interface FeePayment {
-  id: string;
-  studentId: string;
-  studentName: string;
-  amount: number;
-  term: string;
-  paymentMethod: 'bankak' | 'fawry' | 'onb' | 'card';
-  referenceNumber: string;
-  notes?: string;
-  date: string;
-  status: 'verified' | 'pending';
-  receiptNumber: string;
-}
-
-export interface Announcement {
-  id: string;
-  title: string;
-  content: string;
-  date: string;
-  department: string;
-  isUrgent?: boolean;
-  category: 'academic' | 'exams' | 'financial' | 'general';
-}
-
-export interface TranscriptCourse {
-  code: string;
-  title: string;
-  creditHours: number;
-  grade: 'A+' | 'A' | 'B+' | 'B' | 'C+' | 'C' | 'D' | 'F';
-  points: number;
-  totalMark: number;
-}
-
-export interface TranscriptSemester {
-  id: string;
-  semesterName: string;
-  academicYear: string;
-  courses: TranscriptCourse[];
-  semesterGpa: number;
-  cumulativeGpa: number;
-  earnedHours: number;
-}
-
-export interface StudentTranscript {
-  studentId: string;
-  studentName: string;
-  nationalId: string;
-  faculty: string;
-  department: string;
-  degree: string;
-  admissionYear: string;
-  graduationYear?: string;
-  cumulativeGpa: number;
-  totalCreditHours: number;
-  academicStanding: string;
-  semesters: TranscriptSemester[];
-}
-
-export interface DocumentVerificationRecord {
-  serialNumber: string;
-  documentType: 'شهادة تخرج بكالوريوس' | 'كشف درجات معتمد' | 'إفادة قيد أكاديمي' | 'سند سداد رسوم';
-  studentName: string;
-  studentId: string;
-  nationalId: string;
-  issueDate: string;
-  status: 'valid' | 'revoked' | 'under_review';
-  gpa?: string;
-  honors?: string;
-  faculty: string;
-  issuedBy: string;
-  qrHash: string;
-}
-
-export interface LibraryResource {
-  id: string;
-  title: string;
-  author: string;
-  category: 'معايير محاسبية دولية' | 'قوانين وضرائب سودانية' | 'كتب ومقررات أكاديمية' | 'أبحاث ودوريات محاسبية';
-  year: string;
-  pages: number;
-  fileSize: string;
-  format: 'PDF' | 'DOCX' | 'XLSX';
-  downloadCount: number;
-  description: string;
-  tags: string[];
+  pageNumber: number; // 1-based
+  x: number; // in canvas coordinate space
+  y: number;
+  width: number;
+  height: number;
+  type: RedactEffectType;
+  labelText?: string;
+  highlightColor?: string;
+  customColor?: string;
 }
 

@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 500" width="100%" height="100%">
+  <!-- Background Circle -->
+  <circle cx="250" cy="250" r="245" fill="#f8fafc" stroke="#e2e8f0" stroke-width="10"/>
+  
+  <g transform="translate(0, 10)">
+    <!-- Hijab Outer Scarf Shape -->
+    <path d="M 250,55 
+             C 175,55 125,120 120,220 
+             C 115,310 80,380 40,430 
+             C 90,448 160,455 250,455 
+             C 340,455 410,448 460,430 
+             C 420,380 385,310 380,220 
+             C 375,120 325,55 250,55 Z" 
+          fill="#1e293b"/>
+
+    <!-- Hijab Fold & Drape Lines -->
+    <path d="M 120,270 C 170,350 250,380 375,340 C 310,400 210,420 55,410 C 80,360 105,315 120,270 Z" 
+          fill="#0f172a"/>
+    <path d="M 70,370 C 130,410 220,428 350,370 C 375,400 395,420 440,430 C 380,448 300,455 250,455 C 160,455 90,445 40,430 C 50,410 60,390 70,370 Z" 
+          fill="#090d16"/>
+    
+    <!-- White Inner Fold Accents matching the minimalist design -->
+    <path d="M 120,270 Q 200,365 375,340" fill="none" stroke="#ffffff" stroke-width="7" stroke-linecap="round"/>
+    <path d="M 50,395 Q 180,445 440,415" fill="none" stroke="#ffffff" stroke-width="7" stroke-linecap="round"/>
+    <path d="M 250,75 C 205,75 180,120 180,165 Q 220,135 250,135 Q 280,135 320,165 C 320,120 295,75 250,75 Z" 
+          fill="#0f172a" stroke="#ffffff" stroke-width="4"/>
+
+    <!-- Face Oval Window Opening -->
+    <path d="M 250,115 
+             C 195,115 180,175 180,240 
+             C 180,310 215,355 250,355 
+             C 285,355 320,310 320,240 
+             C 320,175 305,115 250,115 Z" 
+          fill="#ffffff" stroke="#ffffff" stroke-width="4"/>
+  </g>
+</svg>

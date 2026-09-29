@@ -1,0 +1,10 @@
+User-agent: *
+Allow: /
+Allow: /#privacy
+Allow: /#terms
+Allow: /#about
+Allow: /#contact
+Allow: /#cookies
+Allow: /#disclaimer
+
+Sitemap: https://pdftools.site/sitemap.xml
